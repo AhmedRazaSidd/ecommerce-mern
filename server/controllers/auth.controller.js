@@ -1,0 +1,10 @@
+export const signup = async (req, res) => {
+    res.send('Sign Up route called');
+}
+export const login = async (req, res) => {
+    res.send('Login In route called');
+}
+
+export const logout = async (req, res) => {
+    res.send('Logout route called');
+}

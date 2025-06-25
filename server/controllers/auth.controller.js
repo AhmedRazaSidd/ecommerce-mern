@@ -47,6 +47,12 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters long" });
+    }
+
     const user = await User.create({ name, email, password });
 
     // authentication
@@ -75,6 +81,14 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    if (!user) {
+      return res.status(400).json({ message: "Email or Password Incorrect" });
+    }
 
     const isPasswordCorrect = user.comparePassword(password);
 
@@ -150,7 +164,7 @@ export const refreshToken = async (req, res) => {
   }
 };
 
-export const getProfile = async () => {
+export const getProfile = async (req, res) => {
   try {
     res.status(200).json(req.user);
   } catch (error) {

@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
-import { Mail, User, Lock, Loader } from "lucide-react";
+import { Mail, User, Lock, Loader, ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useUserStore } from "../stores/useUserStore";
 
 const SignUp = () => {
-  const loading = true;
+  const { signup, loading } = useUserStore();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -14,7 +16,7 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+    signup(formData);
   };
 
   return (
@@ -155,6 +157,15 @@ const SignUp = () => {
               )}
             </button>
           </form>
+          <p className="mt-8 text-center text-sm text-gray-400">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-medium text-emerald-400 hover:text-emerald-300"
+            >
+              Login here <ArrowRight className="inline h-4 w-4" />
+            </Link>
+          </p>
         </div>
       </motion.div>
     </div>

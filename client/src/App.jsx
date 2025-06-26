@@ -8,23 +8,21 @@ import { ToastContainer } from "react-toastify";
 import { useUserStore } from "./stores/useUserStore";
 import { useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
+import Admin from "./pages/Admin";
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
 
   useEffect(() => {
     checkAuth();
-    console.log('ss');
-    
+    console.log("ss");
   }, [checkAuth]);
-  console.log(user);
-  
 
   if (checkingAuth) return <LoadingSpinner />;
 
   return (
     <>
-      <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden"> 
+      <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
         {/* Background gradient */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
@@ -42,6 +40,12 @@ function App() {
             <Route
               path="/login"
               element={!user ? <Login /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/secret-dashboard"
+              element={
+                user?.role === "admin" ? <Admin /> : <Navigate to="/login" />
+              }
             />
           </Routes>
         </div>

@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { Lock, LogIn, LogOut, ShoppingCart, UserPlus } from "lucide-react";
-
+import { useUserStore } from "../stores/useUserStore";
 const Navbar = () => {
-  const user = true;
-  const isAdmin = false;
+  const { user, logout } = useUserStore();
+  const isAdmin = user ? user.role.toLowerCase() === "admin" : "";
 
   return (
     <div className="fixed top-0 left-0 w-full bg-gray-900 opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-emerald-800">
@@ -38,13 +38,16 @@ const Navbar = () => {
               </Link>
             )}
             {isAdmin && (
-              <Link to='/dashboard' className="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-2 rounded-md font-medium transition duration-300 ease-in-out flex items-center">
+              <Link
+                to="/secret-dashboard"
+                className="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-2 rounded-md font-medium transition duration-300 ease-in-out flex items-center"
+              >
                 <Lock className="inline-block mr-1" size={18} />
                 <span className="hidden sm:inline">Dashboard</span>
               </Link>
             )}
             {user ? (
-              <button className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 cursor-pointer rounded-md flex items-center transition duration-300 ease-in-out">
+              <button onClick={logout} className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 cursor-pointer rounded-md flex items-center transition duration-300 ease-in-out">
                 <LogOut size={18} />
                 <span className="hidden sm:inline ml-2">Log Out</span>
               </button>

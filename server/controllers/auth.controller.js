@@ -80,36 +80,45 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
 
+    // Check if request body contains email and password
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const user = await User.findOne({ email });
+
+    // Check if user exists
     if (!user) {
       return res.status(400).json({ message: "Email or Password Incorrect" });
     }
 
-    const isPasswordCorrect = user.comparePassword(password);
-
-    if (user && isPasswordCorrect) {
-      const { accessToken, refreshToken } = generateTokens(user._id);
-
-      await storeRefreshToken(user._id, refreshToken);
-      setCookies(res, accessToken, refreshToken);
-
-      res.status(200).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      });
+    // Validate password
+    const isPasswordCorrect = await user.comparePassword(password); // Ensure this returns a promise
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ message: "Email or Password Incorrect" });
     }
+
+    // Generate tokens and store the refresh token
+    const { accessToken, refreshToken } = generateTokens(user._id);
+    await storeRefreshToken(user._id, refreshToken);
+
+    // Set cookies
+    setCookies(res, accessToken, refreshToken);
+
+    // Respond with user data
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
   } catch (error) {
-    console.log("Error in login controller", error.message);
+    console.log("Error in login controller:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 export const logout = async (req, res) => {
   try {

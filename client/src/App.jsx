@@ -12,6 +12,8 @@ import Admin from "./pages/Admin";
 import Category from "./pages/Category";
 import Cart from "./pages/Cart";
 import { useCartStore } from "./stores/useCartStore";
+import PurchaseSuccess from "./pages/PurchaseSuccess";
+import PurchaseCancel from "./pages/PurchaseCancel";
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -24,7 +26,7 @@ function App() {
   useEffect(() => {
     if (!user) return;
     getCartItems();
-  }, [getCartItems]);
+  }, [getCartItems, user]);
 
   if (checkingAuth) return <LoadingSpinner />;
 
@@ -59,6 +61,14 @@ function App() {
             <Route
               path="/cart"
               element={user ? <Cart /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/purchase-success"
+              element={user ? <PurchaseSuccess /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/purchase-cancel"
+              element={user ? <PurchaseCancel /> : <Navigate to="/login" />}
             />
           </Routes>
         </div>

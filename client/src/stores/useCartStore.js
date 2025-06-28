@@ -11,31 +11,48 @@ export const useCartStore = create((set, get) => ({
     try {
       const res = await axios.get("/cart");
       set({ cart: res.data });
-      get().calculateTotals();   
+      get().calculateTotals();
     } catch (error) {
       set({ cart: [] });
       console.log(error.response.data.message || "An error occurred");
     }
   },
   addToCart: async (product) => {
-		try {
-			await axios.post("/cart", { productId: product._id });
-			toast.success("Product added to cart");
+    try {
+      await axios.post("/cart", { productId: product._id });
+      toast.success("Product added to cart");
 
-			set((prevState) => {
-				const existingItem = prevState.cart.find((item) => item._id === product._id);
-				const newCart = existingItem
-					? prevState.cart.map((item) =>
-							item._id === product._id ? { ...item, quantity: item.quantity + 1 } : item
-					  )
-					: [...prevState.cart, { ...product, quantity: 1 }];
-				return { cart: newCart };
-			});
-			get().calculateTotals();
-		} catch (error) {
-			toast.error(error.response.data.message || "An error occurred");
-		}
-	},
+      set((prevState) => {
+        const existingItem = prevState.cart.find(
+          (item) => item._id === product._id
+        );
+        const newCart = existingItem
+          ? prevState.cart.map((item) =>
+              item._id === product._id
+                ? { ...item, quantity: item.quantity + 1 }
+                : item
+            )
+          : [...prevState.cart, { ...product, quantity: 1 }];
+        return { cart: newCart };
+      });
+      get().calculateTotals();
+    } catch (error) {
+      toast.error(error.response.data.message || "An error occurred");
+    }
+  },
+  removeFromCart: async (productId) => {
+    try {
+      await axios.delete("/cart", { data: { productId } });
+      toast.success("Product removed from cart");
+      set((prevState) => ({
+        cart: prevState.cart.filter((item) => item._id !== productId),
+      }));
+      get().calculateTotals();
+    } catch (error) {
+      console.log("Error in removeFromCart Product");
+      toast.error(error.response.data.message);
+    }
+  },
   calculateTotals: () => {
     const { cart, coupon } = get();
     const subtotal = cart.reduce(

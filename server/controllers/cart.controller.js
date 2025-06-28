@@ -32,9 +32,6 @@ export const removeAllFromCart = async (req, res) => {
     }
 
     await user.save();
-
-    console.log(user);
-
     res.status(200).json(user.cartItems);
   } catch (error) {
     console.log("Error in removeAllFromCart controller", error.message);

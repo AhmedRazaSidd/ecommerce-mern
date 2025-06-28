@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import CartItem from "../components/CartItem";
 import PeopleAlsoBought from "../components/PeopleAlsoBought";
+import OrderSummary from "../components/OrderSummary";
+import GiftCouponCard from "../components/GiftCouponCard";
 
 const Cart = () => {
   const { cart } = useCartStore();
@@ -29,6 +31,17 @@ const Cart = () => {
             )}
             {cart.length > 0 && <PeopleAlsoBought />}
           </motion.div>
+          {cart.length > 0 && (
+            <motion.div
+              className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <OrderSummary/>
+              <GiftCouponCard/>
+            </motion.div>
+          )}
         </div>
       </div>
     </div>
@@ -38,22 +51,24 @@ const Cart = () => {
 export default Cart;
 
 const EmptyCartUI = () => {
-  <motion.div
-    className="flex flex-col items-center justify-center space-y-4 py-16"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-  >
-    <ShoppingCart className="h-24 w-24 text-gray-300" />
-    <h3 className="text-2xl font-semibold">Your cart is empty</h3>
-    <p className="text-gray-400">
-      Looks like you {"havem't"} added anything to your cart yet.
-    </p>
-    <Link
-      className="mt-4 rounded-md bg-emerald-500 px-6 py-2 text-white transition-colors hover:bg-emerald-600"
-      to="/"
+  return (
+    <motion.div
+      className="flex flex-col items-center justify-center space-y-4 py-16"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      Start Shopping
-    </Link>
-  </motion.div>;
+      <ShoppingCart className="h-24 w-24 text-gray-300" />
+      <h3 className="text-2xl font-semibold">Your cart is empty</h3>
+      <p className="text-gray-400">
+        Looks like you {"havem't"} added anything to your cart yet.
+      </p>
+      <Link
+        className="mt-4 rounded-md bg-emerald-500 px-6 py-2 text-white transition-colors hover:bg-emerald-600"
+        to="/"
+      >
+        Start Shopping
+      </Link>
+    </motion.div>
+  );
 };

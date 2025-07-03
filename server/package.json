@@ -2,11 +2,10 @@
   "name": "ecommerce-mern",
   "version": "1.0.0",
   "description": "",
-  "main": "server/server.js",
+  "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon server/server.js",
-    "start": "nodemon server/server.js",
-    "build":"npm install && npm install --prefix client && npm run build --prefix client"
+    "dev": "nodemon src/server.js",
+    "start": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "Ahmed Raza",

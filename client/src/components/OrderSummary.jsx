@@ -13,24 +13,29 @@ const OrderSummary = () => {
   const { total, subTotal, coupon, isCouponApplied, cart } = useCartStore();
 
   const savings = subTotal - total;
-  const formattedSubTotal = subTotal?.toFixed(0) || 0;
-  const formattedTotal = total?.toFixed(0);
-  const formattedSavings = savings?.toFixed();
+  const formattedSubTotal = subTotal?.toFixed(0) || "0";
+  const formattedTotal = total?.toFixed(0) || "0";
+  const formattedSavings = savings?.toFixed(0) || "0";
 
   const handlePayment = async () => {
     const stripe = await stripePromise;
-    const res = await axios.post("/payments/create-checkout-session", {
-      products: cart,
-      coupon: coupon ? coupon.code : null,
-    });
+    try {
+      const res = await axios.post("/payments/create-checkout-session", {
+        products: cart,
+        couponCode: coupon ? coupon.code : null,
+      });
 
-    const session = res.data;
-    const result = await stripe.redirectToCheckout({
-      sessionId: session.id,
-    });
+      const session = res.data;
 
-    if (result.error) {
-      console.error("Error", result.error);
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+
+      if (result.error) {
+        console.error("Stripe Checkout error:", result.error);
+      }
+    } catch (error) {
+      console.error("Payment initiation failed:", error);
     }
   };
 
@@ -43,6 +48,7 @@ const OrderSummary = () => {
     >
       <p className="text-xl font-semibold text-emerald-400">Order Summary</p>
       <div className="space-y-4">
+        {/* Subtotal */}
         <dl className="flex items-center justify-between gap-4">
           <dt className="text-base font-normal text-gray-300">
             Original Price
@@ -51,6 +57,8 @@ const OrderSummary = () => {
             ${formattedSubTotal}
           </dd>
         </dl>
+
+        {/* Savings */}
         {savings > 0 && (
           <dl className="flex items-center justify-between gap-4">
             <dt className="text-base font-normal text-gray-300">Savings</dt>
@@ -59,22 +67,28 @@ const OrderSummary = () => {
             </dd>
           </dl>
         )}
+
+        {/* Applied Coupon */}
         {coupon && isCouponApplied && (
           <dl className="flex items-center justify-between gap-4">
             <dt className="text-base font-normal text-gray-300">
-              Coupon ({coupon})
+              Coupon ({coupon.code})
             </dt>
             <dd className="text-base font-medium text-emerald-400">
-              -{coupon.discountPercentage}
+              -{coupon.discountPercentage}%
             </dd>
           </dl>
         )}
+
+        {/* Total */}
         <dl className="flex items-center justify-between gap-4 border-t border-gray-600 pt-2">
           <dt className="text-base font-bold text-white">Total</dt>
           <dd className="text-base font-bold text-emerald-400">
             ${formattedTotal}
           </dd>
         </dl>
+
+        {/* Checkout Button */}
         <motion.button
           className="flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300"
           whileHover={{ scale: 1.05 }}
@@ -83,6 +97,8 @@ const OrderSummary = () => {
         >
           Proceed to Checkout
         </motion.button>
+
+        {/* Continue Shopping Link */}
         <div className="flex items-center justify-center gap-2">
           <span className="text-sm font-normal text-gray-400">
             <Link

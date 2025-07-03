@@ -3,7 +3,7 @@ import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 
-export const analytics = async () => {
+export const analytics = async (req,res) => {
   try {
     const analyticsData = await getAnalyticsData();
 
@@ -74,9 +74,9 @@ const getDailySalesData = async (startDate, endDate) => {
     return dateArray.map((date) => {
       const foundData = dailySalesData.find((item) => item._id === date);
       return {
-        date,
+        name:date,
         sales: foundData?.sales || 0,
-        revenue: foundData?.revenue || 0,
+        revenue: foundData?.revenue.toFixed(0) || 0,
       };
     });
   } catch (error) {
